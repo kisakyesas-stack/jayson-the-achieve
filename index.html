@@ -6,7 +6,7 @@
     <title>Jayson the Achieve - Auth Gateway</title>
     <link rel="preconnect" href="https://googleapis.com"><link rel="preconnect" href="https://gstatic.com" crossorigin><link href="https://googleapis.com/css2?family=Share+Tech+Mono&display=swap" rel="stylesheet">
     <style>
-        :root { --matrix-green: #00ff41; --dark-green: #003b00; --terminal-bg: #0d0d0d; --error-red: #ff3333; --panel-bg: rgba(16, 28, 16, 0.9); }
+        :root { --matrix-green: #00ff41; --dark-green: #003b00; --terminal-bg: #0d0d0d; --panel-bg: rgba(16, 28, 16, 0.9); }
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Share Tech Mono', monospace; }
         body, html { background-color: var(--terminal-bg); color: var(--matrix-green); min-height: 100vh; display: flex; flex-direction: column; justify-content: center; align-items: center; }
         .page-panel { width: 100%; max-width: 450px; border: 2px solid var(--matrix-green); background: var(--panel-bg); box-shadow: 0 0 20px rgba(0, 255, 65, 0.2); padding: 25px; }
@@ -20,18 +20,17 @@
 <body>
     <div class="page-panel">
         <h2>_ SECURE_AUTH_NODE</h2>
-        <label>OPERATOR ID (Username):</label>
+        <label>OPERATOR ID:</label>
         <input type="text" id="username" class="terminal-input" placeholder="operator01 to operator20" autofocus>
-        <label>DECRYPTION KEY (Password):</label>
+        <label>DECRYPTION KEY:</label>
         <input type="password" id="password" class="terminal-input" placeholder="••••••••">
         <button class="terminal-btn" onclick="executeAuth()">INITIALIZE TERMINAL</button>
-        <div id="error-msg" style="color:var(--error-red); text-align:center; margin-top:15px; display:none;">ACCESS DENIED: KEY MISMATCH</div>
+        <div id="error-msg" style="color:#ff3333; text-align:center; margin-top:15px; display:none;">ACCESS DENIED: KEY MISMATCH</div>
     </div>
     <footer>SYSTEM DESIGN: Jayson the Achieve &bull; created by Twine Jayson Prince</footer>
     <script>
         const VALID_USERS =;
         for(let i=1; i<=20; i++) { VALID_USERS.push('operator' + (i < 10 ? '0' + i : i)); }
-        
         function executeAuth() {
             const user = document.getElementById('username').value.trim().toLowerCase();
             const pass = document.getElementById('password').value;
