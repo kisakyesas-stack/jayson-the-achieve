@@ -3,8 +3,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Jayson the Achieve - Chat</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&display=swap" rel="stylesheet">
+    <title>Jayson the Achieve - Global Sync Node</title>
+    <link rel="preconnect" href="https://googleapis.com"><link rel="preconnect" href="https://gstatic.com" crossorigin><link href="https://googleapis.com/css2?family=Share+Tech+Mono&display=swap" rel="stylesheet">
+    
+    <!-- Core Google Firebase 8.x Live Cloud Connection CDNs -->
+    <script src="https://gstatic.com"></script>
+    <script src="https://gstatic.com"></script>
+    
     <style>
         :root { --matrix-green: #00ff41; --dark-green: #003b00; --terminal-bg: #0d0d0d; --error-red: #ff3333; --panel-bg: rgba(16, 28, 16, 0.9); }
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Share Tech Mono', monospace; }
@@ -24,71 +29,94 @@
     </style>
     <script>
         if (localStorage.getItem('jayson_session_active') !== 'true') { window.location.href = 'index.html'; }
-        function handleLogout() { localStorage.clear(); window.location.href = 'index.html'; }
     </script>
 </head>
 <body>
-    <script type="module">
-  // Import the functions you need from the SDKs you need
-  import { initializeApp } from "https://www.gstatic.com/firebasejs/12.17.1/firebase-app.js";
-  import { getAnalytics } from "https://www.gstatic.com/firebasejs/12.17.1/firebase-analytics.js";
-  // TODO: Add SDKs for Firebase products that you want to use
-  // https://firebase.google.com/docs/web/setup#available-libraries
-
-  // Your web app's Firebase configuration
-  // For Firebase JS SDK v7.20.0 and later, measurementId is optional
-  const firebaseConfig = {
-    apiKey: "AIzaSyC-ljQnHymXnL9RtWk2r3y01qSyolCdG2o",
-    authDomain: "jayson-the-achieve.firebaseapp.com",
-    projectId: "jayson-the-achieve",
-    storageBucket: "jayson-the-achieve.firebasestorage.app",
-    messagingSenderId: "995830572111",
-    appId: "1:995830572111:web:40a218046a1e605ea8363a",
-    measurementId: "G-FHKV28KQ22"
-  };
-
-  // Initialize Firebase
-  const app = initializeApp(firebaseConfig);
-  const analytics = getAnalytics(app);
-</script>
     <header>
-        <div style="font-size: 2rem;">[ JAYSON THE ACHIEVE CENTRAL LOG ]</div>
+        <div style="font-size: 2rem;">[ JAYSON THE ACHIEVE GLOBAL LIVE TERMINAL ]</div>
         <nav class="nav-bar">
             <a href="chat.html" class="nav-link active">HOME PANEL</a>
             <a href="locate.html" class="nav-link">LOCATE RADAR</a>
-            <a href="#" onclick="handleLogout()" class="nav-link" style="border-color:var(--error-red); color:var(--error-red);">DISCONNECT</a>
+            <a href="#" onclick="localStorage.clear(); window.location.href='index.html';" class="nav-link" style="border-color:var(--error-red); color:var(--error-red);">DISCONNECT</a>
         </nav>
     </header>
     <main class="main-content">
         <div class="page-panel">
-            <div style="margin-bottom:15px;">OPERATOR ACTIVE: <span id="u-tag"></span></div>
+            <div style="margin-bottom:15px;">ACTIVE MATRIX HANDLE: <span id="u-tag" style="font-weight:bold; color:#00fff0;"></span></div>
             <div class="chat-area" id="box"></div>
             <div style="display:flex; gap:10px;">
-                <input type="text" id="inp" class="terminal-input" placeholder="Type transmission data..." onkeydown="if(event.key==='Enter') send()">
+                <input type="text" id="inp" class="terminal-input" placeholder="Inject localized data array payload to global server pipeline..." onkeydown="if(event.key==='Enter') send()">
                 <button class="terminal-btn" onclick="send()">TRANSMIT</button>
             </div>
         </div>
     </main>
     <footer>SYSTEM DESIGN: Jayson the Achieve &bull; created by Twine Jayson Prince</footer>
+
     <script>
-        const me = localStorage.getItem('jayson_session_user') || 'ANON';
+        // Real active configurations mapped to your Google Project Dashboard
+        const firebaseConfig = {
+            apiKey: "AIzaSyAuk5if70H5DGkRuV2vTefUZd4JINxdunE",
+            authDomain: "://firebaseapp.com",
+            databaseURL: "https://firebaseio.com",
+            projectId: "jayson-the-achieve-96582",
+            storageBucket: "jayson-the-achieve-96582.firebasestorage.app",
+            messagingSenderId: "682004007077",
+            appId: "1:682004007077:web:65422df8a73802ec33a54c"
+        };
+        
+        // Boot up cloud ecosystem connection pipelines inside the correct workspace script block
+        firebase.initializeApp(firebaseConfig);
+        const database = firebase.database();
+
+        const me = localStorage.getItem('jayson_session_user') || 'ANONYMOUS';
         document.getElementById('u-tag').innerText = me.toUpperCase();
-        function getM() { return JSON.parse(localStorage.getItem('j_chat') || '[]'); }
+
+        // Push chat text data straight up into the cloud pipeline repository hub array
         function send() {
-            const i = document.getElementById('inp'); if(!i.value.trim()) return;
-            const m = getM(); m.push({ s: me, b: i.value.trim(), t: new Date().toLocaleTimeString() });
-            localStorage.setItem('j_chat', JSON.stringify(m)); i.value = ''; render();
-        }
-        function render() {
-            const b = document.getElementById('box'); const m = getM(); b.innerHTML = '';
-            m.forEach(p => {
-                const d = document.createElement('div'); d.className = 'msg-bubble' + (p.s === me ? ' self' : '');
-                d.innerHTML = `<div style="font-size:0.8rem; opacity:0.7;">${p.s.toUpperCase()} - ${p.t}</div><div>${p.b}</div>`;
-                b.appendChild(d);
+            const inputField = document.getElementById('inp'); 
+            const textContent = inputField.value.trim();
+            if(!textContent) return;
+
+            database.ref('global_dispatches').push({
+                operator: me,
+                packet: textContent,
+                stamp: new Date().toLocaleTimeString()
             });
-            b.scrollTop = b.scrollHeight;
+            inputField.value = '';
         }
-        render(); setInterval(render, 2000);
+
+        // Automatic Cloud Hook: Fires instantly on all open user displays when a message hits Google
+        database.ref('global_dispatches').on('value', (snapshot) => {
+            const viewportConsole = document.getElementById('box');
+            viewportConsole.innerHTML = '';
+            const messagesArray = snapshot.val();
+            
+            if(!messagesArray) {
+                viewportConsole.innerHTML = '<div style="margin:auto; opacity:0.4;">[ DATABASE SYNC LINK ESTABLISHED: NO GLOBAL PACKETS DETECTED ]</div>';
+                return;
+            }
+
+            // Loop out incoming keys from database index
+            Object.keys(messagesArray).forEach(key => {
+                const node = messagesArray[key];
+                const bubbleElement = document.createElement('div');
+                const validationCheck = node.operator === me;
+                
+                bubbleElement.className = 'msg-bubble' + (validationCheck ? ' self' : '');
+                bubbleElement.innerHTML = `
+                    <div style="font-size:0.8rem; opacity:0.6;">
+                        <span style="color:${validationCheck ? '#00fff0' : 'var(--matrix-green)'}; font-weight:bold;">${node.operator.toUpperCase()}</span> &bull; ${node.stamp}
+                    </div>
+                    <div style="word-break:break-word; margin-top:4px;">${escapeHTML(node.packet)}</div>
+                `;
+                viewportConsole.appendChild(bubbleElement);
+            });
+            viewportConsole.scrollTop = viewportConsole.scrollHeight;
+        });
+
+        function escapeHTML(str) {
+            return str.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+        }
     </script>
 </body>
 </html>
