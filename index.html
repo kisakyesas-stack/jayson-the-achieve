@@ -3,60 +3,66 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Jayson the Achieve - Auth Gateway</title>
-    <link rel="preconnect" href="https://googleapis.com"><link rel="preconnect" href="https://gstatic.com" crossorigin><link href="https://googleapis.com/css2?family=Share+Tech+Mono&display=swap" rel="stylesheet">
-    <!-- Firebase SDKs -->
-    <script src="https://gstatic.com"></script>
-    <script src="https://gstatic.com"></script>
+    <title>Jayson the Achieve - Terminal Auth</title>
+    <link rel="preconnect" href="https://googleapis.com">
+    <link rel="preconnect" href="https://gstatic.com" crossorigin>
+    <link href="https://googleapis.com/css2?family=Share+Tech+Mono&family=Orbitron:wght@400;700&display=swap" rel="stylesheet">
     <style>
-        :root { --matrix-green: #00ff41; --dark-green: #003b00; --terminal-bg: #0d0d0d; --error-red: #ff3333; --panel-bg: rgba(16, 28, 16, 0.9); }
+        :root { --neon: #00ff66; --bg: #030604; --panel: rgba(5, 12, 7, 0.9); --glow: 0 0 20px rgba(0, 255, 102, 0.4); --red: #ff2222; }
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Share Tech Mono', monospace; }
-        body, html { background-color: var(--terminal-bg); color: var(--matrix-green); min-height: 100vh; display: flex; flex-direction: column; justify-content: center; align-items: center; }
-        .page-panel { width: 100%; max-width: 450px; border: 2px solid var(--matrix-green); background: var(--panel-bg); box-shadow: 0 0 20px rgba(0, 255, 65, 0.2); padding: 25px; }
-        h2 { border-bottom: 1px dashed var(--matrix-green); padding-bottom: 10px; margin-bottom: 20px; font-size: 1.5rem; }
-        .terminal-input { width: 100%; background: #000; border: 1px solid var(--matrix-green); padding: 10px; color: var(--matrix-green); font-size: 1.1rem; outline: none; margin-bottom: 20px; }
-        .terminal-btn { width: 100%; background: var(--dark-green); color: var(--matrix-green); border: 2px solid var(--matrix-green); padding: 12px; font-size: 1.2rem; cursor: pointer; transition: all 0.2s; }
-        .terminal-btn:hover { background: var(--matrix-green); color: #000; font-weight: bold; box-shadow: 0 0 15px var(--matrix-green); }
-        footer { position: fixed; bottom: 0; width: 100%; border-top: 2px dashed var(--matrix-green); padding: 15px; text-align: center; background: var(--panel-bg); letter-spacing: 2px; }
+        body, html { background-color: var(--bg); color: var(--neon); height: 100vh; overflow: hidden; display: flex; justify-content: center; align-items: center; }
+        #matrix { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1; opacity: 0.2; }
+        .crt { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.4) 50%); background-size: 100% 4px; z-index: 999; pointer-events: none; }
+        .box { width: 100%; max-width: 420px; background: var(--panel); border: 2px solid var(--neon); box-shadow: var(--glow); padding: 40px 30px; clip-path: polygon(0 0, calc(100% - 20px) 0, 100% 20px, 100% 100%, 20px 100%, 0 calc(100% - 20px)); }
+        h1 { font-family: 'Orbitron', sans-serif; font-size: 1.5rem; text-align: center; margin-bottom: 25px; border-bottom: 1px dashed var(--neon); padding-bottom: 15px; text-shadow: 0 0 10px var(--neon); }
+        .grp { margin-bottom: 20px; }
+        .grp label { display: block; margin-bottom: 8px; font-size: 0.9rem; letter-spacing: 1px; }
+        .input { width: 100%; background: #000; border: 1px solid var(--neon); padding: 12px; color: var(--neon); font-size: 1.1rem; outline: none; }
+        .input:focus { box-shadow: 0 0 10px var(--neon); }
+        .btn { width: 100%; background: rgba(0, 40, 15, 0.6); color: var(--neon); border: 2px solid var(--neon); padding: 14px; font-size: 1.1rem; font-weight: bold; cursor: pointer; letter-spacing: 1px; text-transform: uppercase; transition: 0.2s; }
+        .btn:hover { background: var(--neon); color: #000; box-shadow: 0 0 15px var(--neon); }
+        .err { color: var(--red); text-align: center; margin-top: 15px; font-size: 0.95rem; display: none; text-shadow: 0 0 5px var(--red); }
+        footer { position: fixed; bottom: 0; width: 100%; border-top: 1px dashed var(--neon); padding: 12px; text-align: center; background: #000; font-size: 0.85rem; letter-spacing: 1px; }
     </style>
 </head>
 <body>
-    <div class="page-panel">
-        <h2>_ SECURE_AUTH_NODE</h2>
-        <label>OPERATOR ID:</label>
-        <input type="text" id="username" class="terminal-input" placeholder="operator01 to operator20" autofocus>
-        <label>DECRYPTION KEY:</label>
-        <input type="password" id="password" class="terminal-input" placeholder="••••••••">
-        <button class="terminal-btn" onclick="executeAuth()">INITIALIZE TERMINAL</button>
-        <div id="error-msg" style="color:var(--error-red); text-align:center; margin-top:15px; display:none;">ACCESS DENIED</div>
+    <div class="crt"></div>
+    <canvas id="matrix"></canvas>
+    <div class="box">
+        <h1>[ CONNECTING_TO_CORE ]</h1>
+        <div class="grp">
+            <label>> OPERATOR ID KEY:</label>
+            <input type="text" id="user" class="input" placeholder="operator01 - operator20" autocomplete="off">
+        </div>
+        <div class="grp">
+            <label>> DECRYPTION DEED PIN:</label>
+            <input type="password" id="pass" class="input" placeholder="••••••••">
+        </div>
+        <button class="btn" onclick="login()">Initialize Signal</button>
+        <div id="alert" class="err">CRITICAL FAILURE: ACCESS_DENIED</div>
     </div>
     <footer>SYSTEM DESIGN: Jayson the Achieve &bull; created by Twine Jayson Prince</footer>
     <script>
-        // Your Firebase config
-        const firebaseConfig = {
-            apiKey: "YOUR_API_KEY",
-            authDomain: "://firebaseapp.com",
-            databaseURL: "https://jayson-the-achieve-96582-default-rtdb.firebaseio.com",
-            projectId: "jayson-the-achieve-96582",
-            storageBucket: "jayson-the-achieve-96582.firebasestorage.app",
-            messagingSenderId: "682004007077",
-            appId: "1:682004007077:web:65422df8a73802ec33a54c"
-        };
-        firebase.initializeApp(firebaseConfig);
-        
-        const VALID_USERS =;
-        for(let i=1; i<=20; i++) { VALID_USERS.push('operator' + (i < 10 ? '0' + i : i)); }
-        function executeAuth() {
-            const user = document.getElementById('username').value.trim().toLowerCase();
-            const pass = document.getElementById('password').value;
-            if(VALID_USERS.includes(user) && pass === 'cipher2026') {
-                localStorage.setItem('jayson_session_active', 'true');
-                localStorage.setItem('jayson_session_user', user);
-                window.location.href = './chat.html';
-            } else {
-                document.getElementById('error-msg').style.display = 'block';
-                setTimeout(() => { document.getElementById('error-msg').style.display = 'none'; }, 3000);
+        const cvs = document.getElementById('matrix'); const ctx = cvs.getContext('2d');
+        function sz() { cvs.width = window.innerWidth; cvs.height = window.innerHeight; }
+        window.addEventListener('resize', sz); sz();
+        const str = "0101XYZ🧬🛰️💀⚙️"; const fSz = 14; const cols = Math.floor(cvs.width / fSz); const drops = Array(cols).fill(1);
+        function draw() {
+            ctx.fillStyle = 'rgba(3, 6, 4, 0.05)'; ctx.fillRect(0, 0, cvs.width, cvs.height);
+            ctx.fillStyle = '#00ff66'; ctx.font = fSz + 'px monospace';
+            for (let i = 0; i < drops.length; i++) {
+                ctx.fillText(str[Math.floor(Math.random() * str.length)], i * fSz, drops[i] * fSz);
+                if (drops[i] * fSz > cvs.height && Math.random() > 0.975) drops[i] = 0; drops[i]++;
             }
+        }
+        setInterval(draw, 33);
+        const NODES = []; for(let i=1; i<=20; i++) { NODES.push('operator' + (i < 10 ? '0' + i : i)); }
+        function login() {
+            const u = document.getElementById('user').value.trim().toLowerCase();
+            const p = document.getElementById('pass').value; const a = document.getElementById('alert');
+            if(NODES.includes(u) && p === 'cipher2026') {
+                localStorage.setItem('j_auth', 'true'); localStorage.setItem('j_user', u); window.location.href = './chat.html';
+            } else { a.style.display = 'block'; setTimeout(() => { a.style.display = 'none'; }, 3000); }
         }
     </script>
 </body>
