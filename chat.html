@@ -28,6 +28,29 @@
     </script>
 </head>
 <body>
+    <script type="module">
+  // Import the functions you need from the SDKs you need
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/12.17.1/firebase-app.js";
+  import { getAnalytics } from "https://www.gstatic.com/firebasejs/12.17.1/firebase-analytics.js";
+  // TODO: Add SDKs for Firebase products that you want to use
+  // https://firebase.google.com/docs/web/setup#available-libraries
+
+  // Your web app's Firebase configuration
+  // For Firebase JS SDK v7.20.0 and later, measurementId is optional
+  const firebaseConfig = {
+    apiKey: "AIzaSyC-ljQnHymXnL9RtWk2r3y01qSyolCdG2o",
+    authDomain: "jayson-the-achieve.firebaseapp.com",
+    projectId: "jayson-the-achieve",
+    storageBucket: "jayson-the-achieve.firebasestorage.app",
+    messagingSenderId: "995830572111",
+    appId: "1:995830572111:web:40a218046a1e605ea8363a",
+    measurementId: "G-FHKV28KQ22"
+  };
+
+  // Initialize Firebase
+  const app = initializeApp(firebaseConfig);
+  const analytics = getAnalytics(app);
+</script>
     <header>
         <div style="font-size: 2rem;">[ JAYSON THE ACHIEVE CENTRAL LOG ]</div>
         <nav class="nav-bar">
