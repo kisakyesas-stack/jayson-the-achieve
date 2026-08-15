@@ -39,7 +39,7 @@
             if(VALID_USERS.includes(user) && pass === 'cipher2026') {
                 localStorage.setItem('jayson_session_active', 'true');
                 localStorage.setItem('jayson_session_user', user);
-                window.location.href = 'chat.html';
+                window.location.href = './chat.html';
             } else {
                 document.getElementById('error-msg').style.display = 'block';
             }
