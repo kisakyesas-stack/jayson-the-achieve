@@ -1,49 +1,49 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Jayson the Achieve - Auth Gateway</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&display=swap" rel="stylesheet">
-    <style>
-        :root { --matrix-green: #00ff41; --dark-green: #003b00; --terminal-bg: #0d0d0d; --error-red: #ff3333; --panel-bg: rgba(16, 28, 16, 0.9); }
-        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Share Tech Mono', monospace; }
-        body, html { background-color: var(--terminal-bg); color: var(--matrix-green); min-height: 100vh; display: flex; flex-direction: column; justify-content: center; align-items: center; }
-        .page-panel { width: 100%; max-width: 450px; border: 2px solid var(--matrix-green); background: var(--panel-bg); box-shadow: 0 0 20px rgba(0, 255, 65, 0.2); padding: 25px; }
-        h2 { border-bottom: 1px dashed var(--matrix-green); padding-bottom: 10px; margin-bottom: 20px; font-size: 1.5rem; }
-        .terminal-input { width: 100%; background: #000; border: 1px solid var(--matrix-green); padding: 10px; color: var(--matrix-green); font-size: 1.1rem; outline: none; margin-bottom: 20px; }
-        .terminal-btn { width: 100%; background: var(--dark-green); color: var(--matrix-green); border: 2px solid var(--matrix-green); padding: 12px; font-size: 1.2rem; cursor: pointer; }
-        .terminal-btn:hover { background: var(--matrix-green); color: #000; font-weight: bold; box-shadow: 0 0 15px var(--matrix-green); }
-        footer { position: fixed; bottom: 0; width: 100%; border-top: 2px dashed var(--matrix-green); padding: 15px; text-align: center; background: var(--panel-bg); letter-spacing: 2px; }
-    </style>
+  <title>Jayson the Achieve - Live Chat</title>
 </head>
 <body>
-    <div class="page-panel">
-        <h2>_ SECURE_AUTH_NODE</h2>
-        <label>OPERATOR ID:</label>
-        <input type="text" id="username" class="terminal-input" placeholder="operator01 to operator20">
-        <label>DECRYPTION KEY:</label>
-        <input type="password" id="password" class="terminal-input" placeholder="••••••••">
-        <button class="terminal-btn" onclick="executeAuth()">INITIALIZE TERMINAL</button>
-        <div id="error-msg" style="color:var(--error-red); text-align:center; margin-top:15px; display:none;">ACCESS DENIED</div>
-    </div>
-    <footer>SYSTEM DESIGN: Jayson the Achieve &bull; created by Twine Jayson Prince</footer>
-    <script>
-        const VALID_USERS = [];
-        for(let i=1; i<=20; i++) { VALID_USERS.push('operator' + (i < 10 ? '0' + i : i)); }
-        function executeAuth() {
-            const user = document.getElementById('username').value.trim();
-            const pass = document.getElementById('password').value;
-            if(VALID_USERS.includes(user) && pass === 'cipher2026') {
-                localStorage.setItem('jayson_session_active', 'true');
-                localStorage.setItem('jayson_session_user', user);
-                window.location.href = 'chat.html';
-            } else {
-                document.getElementById('error-msg').style.display = 'block';
-            }
-        }
-    </script>
+  <div id="chat-box"></div>
+  <input type="text" id="message-input" placeholder="Type a message...">
+  <button onclick="sendMessage()">Send</button>
+
+  <!-- Load Firebase libraries directly via CDN -->
+  <script src="https://gstatic.com"></script>
+  <script src="https://gstatic.com"></script>
+
+  <script>
+    // Paste your exact Firebase configuration block here
+    const firebaseConfig = {
+      apiKey: "YOUR_API_KEY",
+      authDomain: "YOUR_://firebaseapp.com",
+      databaseURL: "https://YOUR_://firebaseio.com",
+      projectId: "YOUR_PROJECT_ID",
+      storageBucket: "YOUR_://appspot.com"
+    };
+    
+    // Initialize the real-time cloud data pipeline
+    firebase.initializeApp(firebaseConfig);
+    const database = firebase.database();
+
+    // 1. Listen for new incoming data packets from friends live
+    database.ref('global-chat').on('child_added', (snapshot) => {
+      const data = snapshot.val();
+      const chatBox = document.getElementById('chat-box');
+      chatBox.innerHTML += `<p><b>Friend:</b> ${data.message}</p>`;
+    });
+
+    // 2. Transmit message instantly to the cloud database when clicking send
+    function sendMessage() {
+      const input = document.getElementById('message-input');
+      if(input.value.trim() !== "") {
+        database.ref('global-chat').push({
+          message: input.value,
+          timestamp: Date.now()
+        });
+        input.value = "";
+      }
+    }
+  </script>
 </body>
 </html>
