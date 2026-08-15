@@ -3,8 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Jayson the Achieve - Chat</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&display=swap" rel="stylesheet">
+    <title>Jayson the Achieve - Peer Mesh Terminal</title>
+    <link rel="preconnect" href="https://googleapis.com"><link rel="preconnect" href="https://gstatic.com" crossorigin><link href="https://googleapis.com/css2?family=Share+Tech+Mono&display=swap" rel="stylesheet">
+    <!-- Importing the open-source direct peer network connector script -->
+    <script src="https://unpkg.com"></script>
     <style>
         :root { --matrix-green: #00ff41; --dark-green: #003b00; --terminal-bg: #0d0d0d; --error-red: #ff3333; --panel-bg: rgba(16, 28, 16, 0.9); }
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Share Tech Mono', monospace; }
@@ -24,48 +26,141 @@
     </style>
     <script>
         if (localStorage.getItem('jayson_session_active') !== 'true') { window.location.href = 'index.html'; }
-        function handleLogout() { localStorage.clear(); window.location.href = 'index.html'; }
     </script>
 </head>
 <body>
     <header>
-        <div style="font-size: 2rem;">[ JAYSON THE ACHIEVE CENTRAL LOG ]</div>
+        <div style="font-size: 2rem;">[ JAYSON THE ACHIEVE P2P MESH INTERNET ]</div>
         <nav class="nav-bar">
             <a href="chat.html" class="nav-link active">HOME PANEL</a>
             <a href="locate.html" class="nav-link">LOCATE RADAR</a>
-            <a href="#" onclick="handleLogout()" class="nav-link" style="border-color:var(--error-red); color:var(--error-red);">DISCONNECT</a>
+            <a href="#" onclick="localStorage.clear(); window.location.href='index.html';" class="nav-link" style="border-color:var(--error-red); color:var(--error-red);">DISCONNECT</a>
         </nav>
     </header>
     <main class="main-content">
         <div class="page-panel">
-            <div style="margin-bottom:15px;">OPERATOR ACTIVE: <span id="u-tag"></span></div>
-            <div class="chat-area" id="box"></div>
+            <div style="margin-bottom:15px; display:flex; justify-content:space-between;">
+                <div>OPERATOR: <span id="u-tag" style="font-weight:bold;"></span></div>
+                <div style="color: #00fff0;">NETWORK NODE STATE: <span id="sync-status">INITIALIZING...</span></div>
+            </div>
+            <div class="chat-area" id="box">
+                <div style="margin:auto; opacity:0.5; text-align:center;" id="loading-notice">[ BOOTING RETRO CONNECTIVITY STACK... JOINING GLOBAL NET GRID ]</div>
+            </div>
             <div style="display:flex; gap:10px;">
-                <input type="text" id="inp" class="terminal-input" placeholder="Type transmission data..." onkeydown="if(event.key==='Enter') send()">
+                <input type="text" id="inp" class="terminal-input" placeholder="Broadcast direct packet stream to mesh network..." onkeydown="if(event.key==='Enter') send()">
                 <button class="terminal-btn" onclick="send()">TRANSMIT</button>
             </div>
         </div>
     </main>
     <footer>SYSTEM DESIGN: Jayson the Achieve &bull; created by Twine Jayson Prince</footer>
+
     <script>
         const me = localStorage.getItem('jayson_session_user') || 'ANON';
         document.getElementById('u-tag').innerText = me.toUpperCase();
-        function getM() { return JSON.parse(localStorage.getItem('j_chat') || '[]'); }
-        function send() {
-            const i = document.getElementById('inp'); if(!i.value.trim()) return;
-            const m = getM(); m.push({ s: me, b: i.value.trim(), t: new Date().toLocaleTimeString() });
-            localStorage.setItem('j_chat', JSON.stringify(m)); i.value = ''; render();
-        }
-        function render() {
-            const b = document.getElementById('box'); const m = getM(); b.innerHTML = '';
-            m.forEach(p => {
-                const d = document.createElement('div'); d.className = 'msg-bubble' + (p.s === me ? ' self' : '');
-                d.innerHTML = `<div style="font-size:0.8rem; opacity:0.7;">${p.s.toUpperCase()} - ${p.t}</div><div>${p.b}</div>`;
-                b.appendChild(d);
+        
+        const activeConnections = [];
+        let peer = null;
+
+        // Initialize unique global network room ID based on the system project name
+        const networkRoomPrefix = "jayson_achieve_mesh_room_";
+
+        // Generate server peer instance configuration using free open source hosting
+        try {
+            peer = new Peer(networkRoomPrefix + me, {
+                debug: 1
             });
-            b.scrollTop = b.scrollHeight;
+        } catch(e) {
+            document.getElementById('sync-status').innerText = "CONNECTION FAILURE";
         }
-        render(); setInterval(render, 2000);
+
+        // Fired when the cloud gateway assigns this local terminal node coordinates
+        peer.on('open', (id) => {
+            document.getElementById('sync-status').innerText = "ONLINE (MESH ARMED)";
+            document.getElementById('loading-notice').innerText = "[ LIVE P2P RADAR LINKS RUNNING: WAITING FOR MESH PACKETS ]";
+            scanAndConnectMesh();
+        });
+
+        // Scan and ping the alternative 19 operator channels to auto-join active screens
+        function scanAndConnectMesh() {
+            for(let i = 1; i <= 20; i++) {
+                const targetOperator = 'operator' + (i < 10 ? '0' + i : i);
+                if(targetOperator === me) continue; // Skip connecting to yourself
+
+                const connection = peer.connect(networkRoomPrefix + targetOperator, { reliable: true });
+                setupConnectionListeners(connection);
+            }
+        }
+
+        // Listen for incoming dynamic inbound streams from friends opening your web page
+        peer.on('connection', (incomingConn) => {
+            setupConnectionListeners(incomingConn);
+        });
+
+        function setupConnectionListeners(conn) {
+            // Avoid adding identical connections to the memory grid tracking stack
+            if (activeConnections.some(c => c.peer === conn.peer)) return;
+
+            conn.on('open', () => {
+                activeConnections.push(conn);
+            });
+
+            conn.on('data', (incomingDataPacket) => {
+                appendBubbleToConsole(incomingDataPacket.sender, incomingDataPacket.text, incomingDataPacket.time);
+            });
+
+            conn.on('close', () => {
+                const index = activeConnections.indexOf(conn);
+                if (index > -1) activeConnections.splice(index, 1);
+            });
+        }
+
+        // Send text data payload straight to all logged-in users simultaneously
+        function send() {
+            const inputElement = document.getElementById('inp');
+            const cleanText = inputElement.value.trim();
+            if(!cleanText) return;
+
+            const timeStamp = new Date().toLocaleTimeString();
+            
+            // Loop through our mesh framework grid array and fire packets down the web line
+            activeConnections.forEach(conn => {
+                if(conn.open) {
+                    conn.send({
+                        sender: me,
+                        text: cleanText,
+                        time: timeStamp
+                    });
+                }
+            });
+
+            // Display your own text message bubble instantly inside your view pane
+            appendBubbleToConsole(me, cleanText, timeStamp);
+            inputElement.value = '';
+        }
+
+        function appendBubbleToConsole(senderName, messageText, timeLabel) {
+            const viewportBox = document.getElementById('box');
+            const notice = document.getElementById('loading-notice');
+            if(notice) notice.remove();
+
+            const elementBubble = document.createElement('div');
+            const validationIsSelf = senderName === me;
+            
+            elementBubble.className = 'msg-bubble' + (validationIsSelf ? ' self' : '');
+            elementBubble.innerHTML = `
+                <div style="font-size:0.8rem; opacity:0.7;">
+                    <span style="color:${validationIsSelf ? '#00fff0' : 'var(--matrix-green)'}">${senderName.toUpperCase()}</span> - ${timeLabel}
+                </div>
+                <div style="word-break:break-all; margin-top:4px;">${escapeHTML(messageText)}</div>
+            `;
+            
+            viewportBox.appendChild(elementBubble);
+            viewportBox.scrollTop = viewportBox.scrollHeight;
+        }
+
+        function escapeHTML(str) {
+            return str.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+        }
     </script>
 </body>
 </html>
