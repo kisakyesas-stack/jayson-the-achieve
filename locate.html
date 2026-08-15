@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Jayson the Achieve - Locate</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&display=swap" rel="stylesheet">
+    <link rel="preconnect" href="https://googleapis.com"><link rel="preconnect" href="https://gstatic.com" crossorigin><link href="https://googleapis.com/css2?family=Share+Tech+Mono&display=swap" rel="stylesheet">
     <style>
         :root { --matrix-green: #00ff41; --dark-green: #003b00; --terminal-bg: #0d0d0d; --error-red: #ff3333; --panel-bg: rgba(16, 28, 16, 0.9); }
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Share Tech Mono', monospace; }
@@ -22,16 +22,16 @@
         footer { margin-top: 30px; border-top: 2px dashed var(--matrix-green); padding: 15px; text-align: center; background: var(--panel-bg); }
     </style>
     <script>
-        if (localStorage.getItem('jayson_session_active') !== 'true') { window.location.href = 'index.html'; }
+        if (localStorage.getItem('jayson_session_active') !== 'true') { window.location.href = './index.html'; }
     </script>
 </head>
 <body>
     <header>
         <div style="font-size: 2rem;">[ JAYSON THE ACHIEVE GEOLOCATION ]</div>
         <nav class="nav-bar">
-            <a href="chat.html" class="nav-link">HOME PANEL</a>
-            <a href="locate.html" class="nav-link active">LOCATE RADAR</a>
-            <a href="#" onclick="localStorage.clear(); window.location.href='index.html';" class="nav-link" style="border-color:var(--error-red); color:var(--error-red);">DISCONNECT</a>
+            <a href="./chat.html" class="nav-link">HOME PANEL</a>
+            <a href="./locate.html" class="nav-link active">LOCATE RADAR</a>
+            <a href="#" onclick="localStorage.clear(); window.location.href='./index.html';" class="nav-link" style="border-color:var(--error-red); color:var(--error-red);">DISCONNECT</a>
         </nav>
     </header>
     <main class="main-content">
@@ -48,15 +48,15 @@
                 </ol>
             </div>
             <label>INJECT GOOGLE MAPS COPIED STREAM URL:</label>
-            <input type="text" id="url" class="terminal-input" placeholder="https://maps.app.goo.gl/..." oninput="check()">
-            <a id="lnk" class="terminal-btn" style="opacity:0.4; pointer-events:none;" target="_blank">LAUNCH SATELLITE CONNECTION Map Link</a>
+            <input type="text" id="url" class="terminal-input" placeholder="https://goo.gl..." oninput="check()">
+            <a id="lnk" class="terminal-btn" style="opacity:0.4; pointer-events:none;" target="_blank">LAUNCH SATELLITE CONNECTION</a>
         </div>
     </main>
     <footer>SYSTEM DESIGN: Jayson the Achieve &bull; created by Twine Jayson Prince</footer>
     <script>
         function check() {
             const v = document.getElementById('url').value; const btn = document.getElementById('lnk');
-            if(v.includes('maps')) { btn.style.opacity = '1'; btn.style.pointerEvents = 'auto'; btn.href = v; }
+            if(v.includes('maps') || v.includes('goo.gl')) { btn.style.opacity = '1'; btn.style.pointerEvents = 'auto'; btn.href = v; }
             else { btn.style.opacity = '0.4'; btn.style.pointerEvents = 'none'; }
         }
     </script>
