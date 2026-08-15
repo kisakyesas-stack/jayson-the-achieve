@@ -5,8 +5,11 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Jayson the Achieve - Auth Gateway</title>
     <link rel="preconnect" href="https://googleapis.com"><link rel="preconnect" href="https://gstatic.com" crossorigin><link href="https://googleapis.com/css2?family=Share+Tech+Mono&display=swap" rel="stylesheet">
+    <!-- Firebase SDKs -->
+    <script src="https://gstatic.com"></script>
+    <script src="https://gstatic.com"></script>
     <style>
-        :root { --matrix-green: #00ff41; --dark-green: #003b00; --terminal-bg: #0d0d0d; --panel-bg: rgba(16, 28, 16, 0.9); }
+        :root { --matrix-green: #00ff41; --dark-green: #003b00; --terminal-bg: #0d0d0d; --error-red: #ff3333; --panel-bg: rgba(16, 28, 16, 0.9); }
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Share Tech Mono', monospace; }
         body, html { background-color: var(--terminal-bg); color: var(--matrix-green); min-height: 100vh; display: flex; flex-direction: column; justify-content: center; align-items: center; }
         .page-panel { width: 100%; max-width: 450px; border: 2px solid var(--matrix-green); background: var(--panel-bg); box-shadow: 0 0 20px rgba(0, 255, 65, 0.2); padding: 25px; }
@@ -25,10 +28,22 @@
         <label>DECRYPTION KEY:</label>
         <input type="password" id="password" class="terminal-input" placeholder="••••••••">
         <button class="terminal-btn" onclick="executeAuth()">INITIALIZE TERMINAL</button>
-        <div id="error-msg" style="color:#ff3333; text-align:center; margin-top:15px; display:none;">ACCESS DENIED: KEY MISMATCH</div>
+        <div id="error-msg" style="color:var(--error-red); text-align:center; margin-top:15px; display:none;">ACCESS DENIED</div>
     </div>
     <footer>SYSTEM DESIGN: Jayson the Achieve &bull; created by Twine Jayson Prince</footer>
     <script>
+        // Your Firebase config
+        const firebaseConfig = {
+            apiKey: "YOUR_API_KEY",
+            authDomain: "://firebaseapp.com",
+            databaseURL: "https://jayson-the-achieve-96582-default-rtdb.firebaseio.com",
+            projectId: "jayson-the-achieve-96582",
+            storageBucket: "jayson-the-achieve-96582.firebasestorage.app",
+            messagingSenderId: "682004007077",
+            appId: "1:682004007077:web:65422df8a73802ec33a54c"
+        };
+        firebase.initializeApp(firebaseConfig);
+        
         const VALID_USERS =;
         for(let i=1; i<=20; i++) { VALID_USERS.push('operator' + (i < 10 ? '0' + i : i)); }
         function executeAuth() {
