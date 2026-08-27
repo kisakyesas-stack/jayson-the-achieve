@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>jjdrucom | Network</title>
+    <title>jjdrucom | Secure Hub Network</title>
     <style>
         :root {
             --bg-dark: #0f172a;
@@ -11,142 +11,136 @@
             --accent: #3b82f6;
             --text-main: #f8fafc;
             --text-muted: #94a3b8;
+            --error: #ef4444;
+            --success: #10b981;
         }
 
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', system-ui, sans-serif; }
-        body { background-color: var(--bg-dark); color: var(--text-main); display: flex; flex-direction: column; hieght: 100vh; height: 100vh; overflow: hidden; }
+        body { background-color: var(--bg-dark); color: var(--text-main); display: flex; flex-direction: column; height: 100vh; overflow: hidden; }
 
+        /* ==========================================================================
+           1. SECURE AUTHENTICATION SCREEN STYLES
+           ========================================================================== */
+        #authScreen { display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100vh; padding: 1rem; width: 100%; z-index: 100; background: var(--bg-dark); }
+        .auth-container { background: var(--card-dark); width: 100%; max-width: 420px; padding: 2.5rem; border-radius: 16px; border: 1px solid #334155; box-shadow: 0 10px 25px -5px rgba(0,0,0,0.3); }
+        h2 { font-size: 1.75rem; margin-bottom: 0.5rem; font-weight: 700; text-align: center; }
+        .subtitle { color: var(--text-muted); font-size: 0.875rem; text-align: center; margin-bottom: 2rem; }
+        .form-group { margin-bottom: 1.25rem; }
+        label { display: block; font-size: 0.85rem; margin-bottom: 0.5rem; color: #cbd5e1; text-transform: uppercase; letter-spacing: 0.05em; }
+        input { width: 100%; padding: 0.85rem 1rem; background: #0f172a; border: 1px solid #334155; border-radius: 8px; color: white; font-size: 1rem; transition: 0.2s; }
+        input:focus { outline: none; border-color: var(--accent); }
+        .auth-btn { width: 100%; padding: 0.85rem; background: var(--accent); border: none; border-radius: 8px; color: white; font-size: 1rem; font-weight: 600; cursor: pointer; transition: 0.2s; margin-top: 0.5rem; }
+        .auth-btn:hover { opacity: 0.9; }
+        .toggle-link { text-align: center; font-size: 0.875rem; margin-top: 1.5rem; color: var(--text-muted); }
+        .toggle-link span { color: var(--accent); cursor: pointer; font-weight: 500; }
+        .counter-badge { text-align: center; background: #0f172a; padding: 0.5rem; border-radius: 6px; font-size: 0.8rem; font-weight: bold; margin-bottom: 1.5rem; color: #cbd5e1; border: 1px solid #334155; }
+        .alert { padding: 0.75rem 1rem; border-radius: 6px; font-size: 0.875rem; margin-bottom: 1.25rem; display: none; }
+        .alert.error { background: rgba(239, 68, 68, 0.1); border: 1px solid var(--error); color: #fca5a5; display: block; }
+        .alert.success { background: rgba(16, 185, 129, 0.1); border: 1px solid var(--success); color: #6ee7b7; display: block; }
+
+        /* ==========================================================================
+           2. MAIN WEBSITE APP VIEW STYLES (HIDDEN BY DEFAULT)
+           ========================================================================== */
+        #mainAppHub { display: none; flex-direction: column; height: 100vh; width: 100%; }
+        
         /* Navigation Bar */
         nav { background-color: var(--card-dark); display: flex; justify-content: space-between; align-items: center; padding: 1rem 2rem; border-bottom: 1px solid #334155; }
         .logo { font-size: 1.5rem; font-weight: bold; color: var(--accent); }
         .nav-links button { background: none; border: none; color: var(--text-muted); font-size: 1rem; margin-left: 1.5rem; cursor: pointer; padding: 0.5rem 0.75rem; transition: 0.2s; }
         .nav-links button.active, .nav-links button:hover { color: var(--text-main); border-bottom: 2px solid var(--accent); }
+        .logout-link { color: var(--error) !important; border: none !important; }
 
-        /* Page Container */
+        /* Page Frame Container */
         .page { display: none; flex: 1; flex-direction: column; padding: 2rem; max-width: 800px; margin: 0 auto; width: 100%; overflow-y: auto; }
         .page.active { display: flex; }
 
-        /* Chat System Styles */
-        .chat-box { flex: 1; background: var(--card-dark); border-radius: 12px; padding: 1.5rem; display: flex; flex-direction: column; gap: 1rem; overflow-y: auto; margin-bottom: 1rem; border: 1px solid #334155; }
+        /* Page 1: Chat System Styles */
+        .chat-box { flex: 1; background: var(--card-dark); border-radius: 12px; padding: 1.5rem; display: flex; flex-direction: column; gap: 1rem; overflow-y: auto; margin-bottom: 1rem; border: 1px solid #334155; height: 350px; }
         .message { background: #2e3a52; padding: 0.75rem 1rem; border-radius: 12px; max-width: 75%; align-self: flex-start; }
         .message.me { background: var(--accent); align-self: flex-end; }
+        .msg-meta { font-size: 0.75rem; color: #94a3b8; display: block; margin-bottom: 0.25rem; font-weight: bold; }
         .input-area { display: flex; gap: 0.5rem; }
         input[type="text"] { flex: 1; background: #334155; border: none; padding: 1rem; border-radius: 8px; color: white; }
         button.send-btn { background: var(--accent); border: none; color: white; padding: 0 1.5rem; border-radius: 8px; cursor: pointer; font-weight: bold; }
 
-        /* Media Grid Styles */
-        .media-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 1rem; margin-top: 1rem; }
+        /* Page 2: Media Grid Styles */
+        .media-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 1rem; margin-top: 1rem; }
         .media-card { background: var(--card-dark); border-radius: 8px; overflow: hidden; border: 1px solid #334155; text-align: center; }
-        .media-card img, .media-card video { width: 100%; height: 150px; object-fit: cover; background: #000; }
-        .file-label { display: inline-block; background: #334155; padding: 0.75rem 1.5rem; border-radius: 8px; cursor: pointer; text-align: center; }
+        .media-card img, .media-card video { width: 100%; height: 160px; object-fit: cover; background: #000; display: block; }
+        .file-label { display: inline-block; background: #334155; padding: 0.75rem 1.5rem; border-radius: 8px; cursor: pointer; text-align: center; font-weight: 600; margin-bottom: 1rem; }
+        .file-label:hover { background: #475569; }
 
-        /* About Profile Styles */
+        /* Page 3: About Profile Styles */
         .profile-card { background: var(--card-dark); border-radius: 16px; padding: 3rem; text-align: center; border: 1px solid #334155; }
-        .avatar { width: 120px; height: 120px; background: var(--accent); border-radius: 50%; margin: 0 auto 1.5rem; display: flex; align-items: center; justify-content: center; font-size: 3rem; }
-        .social-links { display: flex; justify-content: center; gap: 1.5rem; margin-top: 2rem; }
-        .social-links a { color: var(--accent); text-decoration: none; font-weight: bold; background: #2e3a52; padding: 0.75rem 1.5rem; border-radius: 8px; transition: 0.2s; }
-        .social-links a:hover { background: var(--accent); color: white; }
+        .avatar { width: 120px; height: 120px; background: var(--accent); border-radius: 50%; margin: 0 auto 1.5rem; display: flex; align-items: center; justify-content: center; font-size: 3rem; font-weight: bold; color: white; }
+        .social-links { display: flex; justify-content: center; gap: 1.5rem; margin-top: 2rem; flex-wrap: wrap; }
+        .social-links a { color: var(--accent); text-decoration: none; font-weight: bold; background: #2e3a52; padding: 0.75rem 1.5rem; border-radius: 8px; transition: 0.2s; border: 1px solid transparent; }
+        .social-links a:hover { background: var(--accent); color: white; border-color: #60a5fa; }
     </style>
 </head>
 <body>
 
-    <!-- Navigation Header -->
-    <nav>
-        <div class="logo">jjdrucom</div>
-        <div class="nav-links">
-            <button onclick="switchPage('chat-page')" id="btn-chat-page" class="active">Messages</button>
-            <button onclick="switchPage('media-page')" id="btn-media-page">Media Feed</button>
-            <button onclick="switchPage('about-page')" id="btn-about-page">About Me</button>
-        </div>
-    </nav>
+    <!-- ==========================================================================
+       SECTION A: ACCESS HUB (LOGIN / OVERLAY GATEWAY)
+       ========================================================================== */ -->
+    <div id="authScreen">
+        <div class="auth-container" id="authGate">
+            <h2 id="gateTitle">Welcome Back</h2>
+            <div class="subtitle" id="gateSubtitle">Enter your unique jjdrucom account keys</div>
 
-    <!-- PAGE 1: CHAT ROOM -->
-    <div id="chat-page" class="page active">
-        <div class="chat-box" id="chatBox">
-            <div class="message">Hey! Welcome to jjdrucom.</div>
-            <div class="message me">What's up! Testing the live feed.</div>
-        </div>
-        <div class="input-area">
-            <input type="text" id="msgInput" placeholder="Type a message to your friends...">
-            <button class="send-btn" onclick="sendMessage()">Send</button>
-        </div>
-    </div>
+            <div class="counter-badge" id="accountCounter">Active Slots: 0 / 20 Users</div>
+            <div class="alert" id="alertBox"></div>
 
-    <!-- PAGE 2: MEDIA ZONE -->
-    <div id="media-page" class="page">
-        <h2 style="margin-bottom: 1rem;">Shared Files</h2>
-        <label class="file-label">
-            📁 Select Image or Video
-            <input type="file" id="mediaInput" accept="image/*,video/*" style="display: none;" onchange="handleMediaUpload(event)">
-        </label>
-        <div class="media-grid" id="mediaGrid"></div>
-    </div>
+            <form id="authForm" onsubmit="handleAuth(event)">
+                <div class="form-group">
+                    <label for="username">Custom Username</label>
+                    <input type="text" id="username" required autocomplete="username">
+                </div>
+                <div class="form-group">
+                    <label for="password">Password</label>
+                    <input type="password" id="password" required autocomplete="current-password">
+                </div>
+                <button type="submit" class="auth-btn" id="submitBtn">Sign In</button>
+            </form>
 
-    <!-- PAGE 3: PERSONAL BIO & SOCIAL HANDLES -->
-    <div id="about-page" class="page">
-        <div class="profile-card">
-            <div class="avatar">JJ</div>
-            <h1>About jjdrucom</h1>
-            <p style="color: var(--text-muted); margin: 1rem 0 2rem;">Welcome to my personal corner of the web! This platform connects me with my inner circle.</p>
-            <h3>Catch me on social media:</h3>
-            <div class="social-links">
-                <!-- Replace '#' with your actual profile links -->
-                <a href="#" target="_blank">Instagram</a>
-                <a href="#" target="_blank">TikTok</a>
-                <a href="#" target="_blank">YouTube</a>
+            <div class="toggle-link" id="toggleGate">
+                Don't have an account? <span onclick="toggleMode()">Create Account</span>
             </div>
         </div>
     </div>
 
-    <script>
-        // Tab Page Switching Engine
-        function switchPage(pageId) {
-            document.querySelectorAll('.page').forEach(page => page.classList.remove('active'));
-            document.querySelectorAll('.nav-links button').forEach(btn => btn.classList.remove('active'));
+    <!-- ==========================================================================
+       SECTION B: PRIMARY APP ARCHITECTURE (jjdrucom SYSTEM)
+       ========================================================================== */ -->
+    <div id="mainAppHub">
+        <!-- Site Navigation Header -->
+        <nav>
+            <div class="logo">jjdrucom</div>
+            <div class="nav-links">
+                <button onclick="switchPage('chat-page')" id="btn-chat-page" class="active">Messages</button>
+                <button onclick="switchPage('media-page')" id="btn-media-page">Media Feed</button>
+                <button onclick="switchPage('about-page')" id="btn-about-page">About Me</button>
+                <button onclick="logout()" class="logout-link">Disconnect</button>
+            </div>
+        </nav>
+
+        <!-- PAGE 1: REAL-TIME CHAT DECK -->
+        <div id="chat-page" class="page active">
+            <h2 style="margin-bottom: 1rem;">Live Communication Feed</h2>
+            <div class="chat-box" id="chatBox">
+                <div class="message">
+                    <span class="msg-meta">System Core</span>
+                    Welcome to the fused jjdrucom instance. Send a live message below.
+                </div>
+            </div>
+            <div class="input-area">
+                <input type="text" id="msgInput" placeholder="Type an encrypted message...">
+                <button class="send-btn" onclick="sendMessage()">Send</button>
+            </div>
+        </div>
+
+        <!-- PAGE 2: SECURE MEDIA GALLERY -->
+        <div id="media-page" class="page">
+            <h2 style="margin-bottom: 0.5rem;">Media Locker</h2>
+            <p style="color: var(--text-muted); margin-bottom: 1.5rem;">Upload and showcase interactive graphics or clips safely across your current console node.</p>
             
-            document.getElementById(pageId).classList.add('active');
-            document.getElementById('btn-' + pageId).classList.add('active');
-        }
-
-        // Live Chat Simulation Logic
-        function sendMessage() {
-            const input = document.getElementById('msgInput');
-            const chatBox = document.getElementById('chatBox');
-            if (input.value.trim() === '') return;
-
-            const msgDiv = document.createElement('div');
-            msgDiv.classList.add('message', 'me');
-            msgDiv.textContent = input.value;
-            chatBox.appendChild(msgDiv);
-            
-            input.value = '';
-            chatBox.scrollTop = chatBox.scrollHeight;
-        }
-
-        // Instant Media Preview Engine
-        function handleMediaUpload(event) {
-            const file = event.target.files[0];
-            if (!file) return;
-
-            const grid = document.getElementById('mediaGrid');
-            const card = document.createElement('div');
-            card.classList.add('media-card');
-
-            const fileURL = URL.createObjectURL(file);
-
-            if (file.type.startsWith('image/')) {
-                const img = document.createElement('img');
-                img.src = fileURL;
-                card.appendChild(img);
-            } else if (file.type.startsWith('video/')) {
-                const video = document.createElement('video');
-                video.src = fileURL;
-                video.controls = true;
-                card.appendChild(video);
-            }
-
-            grid.appendChild(card);
-        }
-    </script>
-</body>
-</html>
