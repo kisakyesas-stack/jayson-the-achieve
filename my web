@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>jjdrucom | Network</title>
+    <style>
+        :root {
+            --bg-dark: #0f172a;
+            --card-dark: #1e293b;
+            --accent: #3b82f6;
+            --text-main: #f8fafc;
+            --text-muted: #94a3b8;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', system-ui, sans-serif; }
+        body { background-color: var(--bg-dark); color: var(--text-main); display: flex; flex-direction: column; hieght: 100vh; height: 100vh; overflow: hidden; }
+
+        /* Navigation Bar */
+        nav { background-color: var(--card-dark); display: flex; justify-content: space-between; align-items: center; padding: 1rem 2rem; border-bottom: 1px solid #334155; }
+        .logo { font-size: 1.5rem; font-weight: bold; color: var(--accent); }
+        .nav-links button { background: none; border: none; color: var(--text-muted); font-size: 1rem; margin-left: 1.5rem; cursor: pointer; padding: 0.5rem 0.75rem; transition: 0.2s; }
+        .nav-links button.active, .nav-links button:hover { color: var(--text-main); border-bottom: 2px solid var(--accent); }
+
+        /* Page Container */
+        .page { display: none; flex: 1; flex-direction: column; padding: 2rem; max-width: 800px; margin: 0 auto; width: 100%; overflow-y: auto; }
+        .page.active { display: flex; }
+
+        /* Chat System Styles */
+        .chat-box { flex: 1; background: var(--card-dark); border-radius: 12px; padding: 1.5rem; display: flex; flex-direction: column; gap: 1rem; overflow-y: auto; margin-bottom: 1rem; border: 1px solid #334155; }
+        .message { background: #2e3a52; padding: 0.75rem 1rem; border-radius: 12px; max-width: 75%; align-self: flex-start; }
+        .message.me { background: var(--accent); align-self: flex-end; }
+        .input-area { display: flex; gap: 0.5rem; }
+        input[type="text"] { flex: 1; background: #334155; border: none; padding: 1rem; border-radius: 8px; color: white; }
+        button.send-btn { background: var(--accent); border: none; color: white; padding: 0 1.5rem; border-radius: 8px; cursor: pointer; font-weight: bold; }
+
+        /* Media Grid Styles */
+        .media-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 1rem; margin-top: 1rem; }
+        .media-card { background: var(--card-dark); border-radius: 8px; overflow: hidden; border: 1px solid #334155; text-align: center; }
+        .media-card img, .media-card video { width: 100%; height: 150px; object-fit: cover; background: #000; }
+        .file-label { display: inline-block; background: #334155; padding: 0.75rem 1.5rem; border-radius: 8px; cursor: pointer; text-align: center; }
+
+        /* About Profile Styles */
+        .profile-card { background: var(--card-dark); border-radius: 16px; padding: 3rem; text-align: center; border: 1px solid #334155; }
+        .avatar { width: 120px; height: 120px; background: var(--accent); border-radius: 50%; margin: 0 auto 1.5rem; display: flex; align-items: center; justify-content: center; font-size: 3rem; }
+        .social-links { display: flex; justify-content: center; gap: 1.5rem; margin-top: 2rem; }
+        .social-links a { color: var(--accent); text-decoration: none; font-weight: bold; background: #2e3a52; padding: 0.75rem 1.5rem; border-radius: 8px; transition: 0.2s; }
+        .social-links a:hover { background: var(--accent); color: white; }
+    </style>
+</head>
+<body>
+
+    <!-- Navigation Header -->
+    <nav>
+        <div class="logo">jjdrucom</div>
+        <div class="nav-links">
+            <button onclick="switchPage('chat-page')" id="btn-chat-page" class="active">Messages</button>
+            <button onclick="switchPage('media-page')" id="btn-media-page">Media Feed</button>
+            <button onclick="switchPage('about-page')" id="btn-about-page">About Me</button>
+        </div>
+    </nav>
+
+    <!-- PAGE 1: CHAT ROOM -->
+    <div id="chat-page" class="page active">
+        <div class="chat-box" id="chatBox">
+            <div class="message">Hey! Welcome to jjdrucom.</div>
+            <div class="message me">What's up! Testing the live feed.</div>
+        </div>
+        <div class="input-area">
+            <input type="text" id="msgInput" placeholder="Type a message to your friends...">
+            <button class="send-btn" onclick="sendMessage()">Send</button>
+        </div>
+    </div>
+
+    <!-- PAGE 2: MEDIA ZONE -->
+    <div id="media-page" class="page">
+        <h2 style="margin-bottom: 1rem;">Shared Files</h2>
+        <label class="file-label">
+            📁 Select Image or Video
+            <input type="file" id="mediaInput" accept="image/*,video/*" style="display: none;" onchange="handleMediaUpload(event)">
+        </label>
+        <div class="media-grid" id="mediaGrid"></div>
+    </div>
+
+    <!-- PAGE 3: PERSONAL BIO & SOCIAL HANDLES -->
+    <div id="about-page" class="page">
+        <div class="profile-card">
+            <div class="avatar">JJ</div>
+            <h1>About jjdrucom</h1>
+            <p style="color: var(--text-muted); margin: 1rem 0 2rem;">Welcome to my personal corner of the web! This platform connects me with my inner circle.</p>
+            <h3>Catch me on social media:</h3>
+            <div class="social-links">
+                <!-- Replace '#' with your actual profile links -->
+                <a href="#" target="_blank">Instagram</a>
+                <a href="#" target="_blank">TikTok</a>
+                <a href="#" target="_blank">YouTube</a>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Tab Page Switching Engine
+        function switchPage(pageId) {
+            document.querySelectorAll('.page').forEach(page => page.classList.remove('active'));
+            document.querySelectorAll('.nav-links button').forEach(btn => btn.classList.remove('active'));
+            
+            document.getElementById(pageId).classList.add('active');
+            document.getElementById('btn-' + pageId).classList.add('active');
+        }
+
+        // Live Chat Simulation Logic
+        function sendMessage() {
+            const input = document.getElementById('msgInput');
+            const chatBox = document.getElementById('chatBox');
+            if (input.value.trim() === '') return;
+
+            const msgDiv = document.createElement('div');
+            msgDiv.classList.add('message', 'me');
+            msgDiv.textContent = input.value;
+            chatBox.appendChild(msgDiv);
+            
+            input.value = '';
+            chatBox.scrollTop = chatBox.scrollHeight;
+        }
+
+        // Instant Media Preview Engine
+        function handleMediaUpload(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+
+            const grid = document.getElementById('mediaGrid');
+            const card = document.createElement('div');
+            card.classList.add('media-card');
+
+            const fileURL = URL.createObjectURL(file);
+
+            if (file.type.startsWith('image/')) {
+                const img = document.createElement('img');
+                img.src = fileURL;
+                card.appendChild(img);
+            } else if (file.type.startsWith('video/')) {
+                const video = document.createElement('video');
+                video.src = fileURL;
+                video.controls = true;
+                card.appendChild(video);
+            }
+
+            grid.appendChild(card);
+        }
+    </script>
+</body>
+</html>
