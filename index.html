@@ -3,12 +3,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>jjdrucom | Secure Hub Network</title>
+    <title>jjdrucom | Interactive Real-Time Hub</title>
     <style>
         :root {
             --bg-dark: #0f172a;
             --card-dark: #1e293b;
             --accent: #3b82f6;
+            --accent-success: #10b981;
             --text-main: #f8fafc;
             --text-muted: #94a3b8;
             --error: #ef4444;
@@ -38,12 +39,13 @@
         .alert.success { background: rgba(16, 185, 129, 0.15); border: 1px solid var(--success); color: #6ee7b7; display: block; }
 
         /* ==========================================================================
-           2. MAIN WEBSITE APP VIEW STYLES
+           2. MAIN WEBSITE APP HUB VIEW (HIDDEN UNTIL VALIDATED)
            ========================================================================== */
         #mainAppHub { display: none; flex-direction: column; height: 100vh; width: 100%; }
         
         nav { background-color: var(--card-dark); display: flex; justify-content: space-between; align-items: center; padding: 1rem 2rem; border-bottom: 1px solid #334155; }
-        .logo { font-size: 1.5rem; font-weight: bold; color: var(--accent); }
+        .logo { font-size: 1.5rem; font-weight: bold; color: var(--accent); display: flex; align-items: center; gap: 0.5rem; }
+        .live-dot { width: 8px; height: 8px; background-color: var(--accent-success); border-radius: 50%; display: inline-block; box-shadow: 0 0 8px var(--accent-success); }
         .nav-links button { background: none; border: none; color: var(--text-muted); font-size: 1rem; margin-left: 1.5rem; cursor: pointer; padding: 0.5rem 0.75rem; transition: 0.2s; }
         .nav-links button.active, .nav-links button:hover { color: var(--text-main); border-bottom: 2px solid var(--accent); }
         .logout-link { color: var(--error) !important; border: none !important; }
@@ -51,28 +53,41 @@
         .page { display: none; flex: 1; flex-direction: column; padding: 2rem; max-width: 800px; margin: 0 auto; width: 100%; overflow-y: auto; }
         .page.active { display: flex; }
 
-        /* Chat Styles */
-        .chat-box { flex: 1; background: var(--card-dark); border-radius: 12px; padding: 1.5rem; display: flex; flex-direction: column; gap: 1rem; overflow-y: auto; margin-bottom: 1rem; border: 1px solid #334155; height: 350px; }
-        .message { background: #2e3a52; padding: 0.75rem 1rem; border-radius: 12px; max-width: 75%; align-self: flex-start; }
+        /* Chat Workspace System */
+        .chat-container-layout { display: flex; flex-direction: column; flex: 1; background: var(--card-dark); border-radius: 12px; border: 1px solid #334155; height: 400px; overflow: hidden; }
+        .chat-box { flex: 1; padding: 1.5rem; display: flex; flex-direction: column; gap: 1rem; overflow-y: auto; }
+        .message { background: #2e3a52; padding: 0.75rem 1rem; border-radius: 12px; max-width: 75%; align-self: flex-start; animation: popIn 0.2s ease-out; }
         .message.me { background: var(--accent); align-self: flex-end; }
+        .message.system { background: rgba(59, 130, 246, 0.1); border: 1px dashed rgba(59, 130, 246, 0.3); align-self: center; font-size: 0.85rem; color: var(--text-muted); text-align: center; }
         .msg-meta { font-size: 0.75rem; color: #94a3b8; display: block; margin-bottom: 0.25rem; font-weight: bold; }
-        .input-area { display: flex; gap: 0.5rem; }
-        input[type="text"] { flex: 1; background: #334155; border: none; padding: 1rem; border-radius: 8px; color: white; }
-        button.send-btn { background: var(--accent); border: none; color: white; padding: 0 1.5rem; border-radius: 8px; cursor: pointer; font-weight: bold; }
+        .message.me .msg-meta { color: #bfdbfe; }
+        
+        .typing-indicator { font-size: 0.85rem; color: var(--text-muted); padding: 0 1.5rem 0.5rem; display: none; font-style: italic; }
+        
+        .input-area { display: flex; gap: 0.5rem; padding: 1rem; background: #0f172a; border-top: 1px solid #334155; }
+        input[type="text"] { flex: 1; background: #334155; border: none; padding: 1rem; border-radius: 8px; color: white; font-size: 1rem; }
+        button.send-btn { background: var(--accent); border: none; color: white; padding: 0 1.5rem; border-radius: 8px; cursor: pointer; font-weight: bold; transition: 0.2s; }
+        button.send-btn:hover { background: #2563eb; }
 
-        /* Media Styles */
+        /* Media Shared Feed */
         .media-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 1rem; margin-top: 1rem; }
-        .media-card { background: var(--card-dark); border-radius: 8px; overflow: hidden; border: 1px solid #334155; text-align: center; }
+        .media-card { background: var(--card-dark); border-radius: 8px; overflow: hidden; border: 1px solid #334155; text-align: center; position: relative; animation: popIn 0.3s ease-out; }
         .media-card img, .media-card video { width: 100%; height: 160px; object-fit: cover; background: #000; display: block; }
-        .file-label { display: inline-block; background: #334155; padding: 0.75rem 1.5rem; border-radius: 8px; cursor: pointer; text-align: center; font-weight: 600; margin-bottom: 1rem; }
+        .media-meta { font-size: 0.75rem; padding: 0.5rem; color: var(--text-muted); background: #0f172a; text-align: left; border-top: 1px solid #334155; }
+        .file-label { display: inline-block; background: #334155; padding: 0.75rem 1.5rem; border-radius: 8px; cursor: pointer; text-align: center; font-weight: 600; margin-bottom: 1rem; transition: 0.2s; }
         .file-label:hover { background: #475569; }
 
-        /* Profile Styles */
+        /* Profile Sheet Container */
         .profile-card { background: var(--card-dark); border-radius: 16px; padding: 3rem; text-align: center; border: 1px solid #334155; }
-        .avatar { width: 120px; height: 120px; background: var(--accent); border-radius: 50%; margin: 0 auto 1.5rem; display: flex; align-items: center; justify-content: center; font-size: 3rem; font-weight: bold; color: white; }
+        .avatar { width: 120px; height: 120px; background: var(--accent); border-radius: 50%; margin: 0 auto 1.5rem; display: flex; align-items: center; justify-content: center; font-size: 3rem; font-weight: bold; color: white; box-shadow: 0 0 20px rgba(59,130,246,0.3); }
         .social-links { display: flex; justify-content: center; gap: 1.5rem; margin-top: 2rem; flex-wrap: wrap; }
         .social-links a { color: var(--accent); text-decoration: none; font-weight: bold; background: #2e3a52; padding: 0.75rem 1.5rem; border-radius: 8px; transition: 0.2s; border: 1px solid transparent; }
         .social-links a:hover { background: var(--accent); color: white; border-color: #60a5fa; }
+
+        @keyframes popIn {
+            from { transform: scale(0.95); opacity: 0; }
+            to { transform: scale(1); opacity: 1; }
+        }
     </style>
 </head>
 <body>
@@ -85,67 +100,37 @@
             <h2>Welcome Back</h2>
             <div class="subtitle">Enter your unique jjdrucom account keys</div>
 
-            <div class="counter-badge">🔒 Spaces Auto-Stripped From All Credentials</div>
+            <div class="counter-badge">🔒 Live Web Sandbox Active</div>
             <div class="alert" id="alertBox"></div>
 
             <form id="authForm">
                 <div class="form-group">
-                    <label for="username">Username</label>
+                    <label for="username">Username Handle</label>
                     <input type="text" id="username" placeholder="e.g. adminjj" required>
                 </div>
                 <div class="form-group">
-                    <label for="password">Password</label>
+                    <label for="password">Security Password</label>
                     <input type="password" id="password" placeholder="••••••••" required>
                 </div>
-                <button type="submit" class="auth-btn">Sign In to Dashboard</button>
+                <button type="submit" class="auth-btn">Establish Session Connect</button>
             </form>
         </div>
     </div>
 
     <!-- ==========================================================================
-       SECTION B: PRIMARY WEBSITE LAYOUT
+       SECTION B: PRIMARY APP ARCHITECTURE (jjdrucom SYSTEM)
        ========================================================================== -->
     <div id="mainAppHub">
+        <!-- Site Navigation Header -->
         <nav>
-            <div class="logo">jjdrucom</div>
+            <div class="logo">jjdrucom <span class="live-dot"></span></div>
             <div class="nav-links">
                 <button onclick="switchPage('chat-page')" id="btn-chat-page" class="active">Messages</button>
                 <button onclick="switchPage('media-page')" id="btn-media-page">Media Feed</button>
                 <button onclick="switchPage('about-page')" id="btn-about-page">About Me</button>
-                <button onclick="logout()" class="logout-link">Disconnect</button>
+                <button onclick="logout()" class="logout-link">Disconnect Node</button>
             </div>
         </nav>
 
-        <!-- PAGE 1: REAL-TIME CHAT DECK -->
+        <!-- PAGE 1: REAL-TIME CHAT INTERACTION DECK -->
         <div id="chat-page" class="page active">
-            <h2 style="margin-bottom: 1rem;">Live Communication Feed</h2>
-            <div class="chat-box" id="chatBox">
-                <div class="message">
-                    <span class="msg-meta">System Core</span>
-                    Welcome to the verified jjdrucom instance. Send a live message below.
-                </div>
-            </div>
-            <div class="input-area">
-                <input type="text" id="msgInput" placeholder="Type an encrypted message...">
-                <button class="send-btn" onclick="sendMessage()">Send</button>
-            </div>
-        </div>
-
-        <!-- PAGE 2: MEDIA GALLERY -->
-        <div id="media-page" class="page">
-            <h2 style="margin-bottom: 0.5rem;">Media Locker</h2>
-            <p style="color: var(--text-muted); margin-bottom: 1.5rem;">Upload and showcase interactive graphics or clips safely across your current console node.</p>
-            
-            <label class="file-label">
-                📁 Share Image or Video
-                <input type="file" id="mediaInput" accept="image/*,video/*" style="display: none;" onchange="handleMediaUpload(event)">
-            </label>
-            
-            <div class="media-grid" id="mediaGrid"></div>
-        </div>
-
-        <!-- PAGE 3: ABOUT ME PROFILE -->
-        <div id="about-page" class="page">
-            <div class="profile-card">
-                <div class="avatar" id="globalProfileAvatar">JJ</div>
-                <h1 id="globalProfileTitle">About jjdrucom</h1>
